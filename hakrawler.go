@@ -128,6 +128,16 @@ func main() {
 				printResult(e.Attr("action"), "form", *showSource, *showJson, results, e)
 			})
 
+			// find meta refresh link
+			c.OnHTML("meta[http-equiv]", func(e *colly.HTMLElement) {
+				if strings.ToLower(e.Attr("http-equiv")) == "refresh" {
+					// leak filter
+					url_ := strings.Split(e.Attr("content"), ";")[1]
+					url := strings.Split(url_, "=")[1]
+					printResult(url, "form", *showSource, *showJson, results, e)
+				}
+			})
+
 			// add the custom headers
 			if headers != nil {
 				c.OnRequest(func(r *colly.Request) {
